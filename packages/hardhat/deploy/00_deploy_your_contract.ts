@@ -1,6 +1,7 @@
 import { HardhatRuntimeEnvironment } from "hardhat/types";
 import { DeployFunction } from "hardhat-deploy/types";
 import { Contract } from "ethers";
+import { tenderlyFund } from "../scripts/tenderly-fund";
 
 /**
  * Deploys a contract named "YourContract" using the deployer account and
@@ -21,6 +22,8 @@ const deployYourContract: DeployFunction = async function (hre: HardhatRuntimeEn
   */
   const { deployer } = await hre.getNamedAccounts();
   const { deploy } = hre.deployments;
+
+  await tenderlyFund(deployer);
 
   await deploy("YourContract", {
     from: deployer,

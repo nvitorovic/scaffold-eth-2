@@ -11,6 +11,7 @@ import "@nomicfoundation/hardhat-verify";
 import "hardhat-deploy";
 import "hardhat-deploy-ethers";
 import * as tenderly from "@tenderly/hardhat-tenderly";
+import { virtualNetworks } from "./tenderly.config";
 
 // If not set, it uses ours Alchemy's default API key.
 // You can get your own at https://dashboard.alchemyapi.io
@@ -21,9 +22,10 @@ const deployerPrivateKey =
 // If not set, it uses ours Etherscan default API key.
 const etherscanApiKey = process.env.ETHERSCAN_API_KEY || "DNXJA8RX2Q3VZ4URQIWP7Z68CJXQZSC6AW";
 
+// Install Tenderly CLI: https://github.com/Tenderly/tenderly-cli?tab=readme-ov-file#installation
 // https://docs.tenderly.co/contract-verification/hardhat
 // To enable Tenderly verification, set automaticVerifications to true
-// Then update config.tenderly below
+// Then update config.tenderly below with your username and project
 tenderly.setup({ automaticVerifications: false });
 
 const config: HardhatUserConfig = {
@@ -53,6 +55,7 @@ const config: HardhatUserConfig = {
         enabled: process.env.MAINNET_FORKING_ENABLED === "true",
       },
     },
+    ...virtualNetworks,
     mainnet: {
       url: `https://eth-mainnet.alchemyapi.io/v2/${providerApiKey}`,
       accounts: [deployerPrivateKey],
