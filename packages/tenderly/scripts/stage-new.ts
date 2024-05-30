@@ -37,7 +37,8 @@ async function createTestnet(networkId: number, chainId: number, environmentSlug
   // Replace with your actual account ID
   const projectSlug = process.env.TENDERLY_PROJECT_ID;
 
-  const apiUrl = `https://api.tenderly.co/api/v1/account/${accountId}/project/${projectSlug}/vnets`;
+  // const apiUrl = `https://api.tenderly.co/api/v1/account/${accountId}/project/${projectSlug}/vnets`;
+  const apiUrl = `https://api.tenderly.co/api/v1/account/${accountId}/project/${projectSlug}/testnet/container`;
 
   try {
     console.log(environmentSlug);
@@ -49,34 +50,44 @@ async function createTestnet(networkId: number, chainId: number, environmentSlug
       },
       body: JSON.stringify({
         slug: environmentSlug,
-        fork_config: {
-          network_id: networkId,
+        displayName: environmentSlug,
+        description: "",
+        visibility: "TEAM",
+        tags: { purpose: "development" },
+        networkConfig: {
+          networkId: networkId + "",
+          blockNumber: "latest",
+          chainConfig: { chainId: chainId + "" },
+          baseFeePerGas: "1",
         },
-        virtual_network_config: {
-          chain_config: {
-            chain_id: chainId,
-          },
-        },
-        sync_state_config: {
+        explorerConfig: {
           enabled: true,
+          verificationVisibility: "abi",
         },
-        explorer_page_config: {
-          enabled: true,
-          verification_visibility: "abi",
-        },
+        syncState: false,
       }),
     });
 
     if (response.ok) {
 
-      const data = await response.json() as {
-        rpcs: {
-          name: string,
-          url: string
-        }[]
-      };
+      const data = await response.json() as any;
 
-      const rpcUrl = data.rpcs.filter((rpc: any) => rpc.name == "Admin RPC")[0].url;
+      const containerId = data.container.id;
+      console.log(containerId);
+      const getUrl = (containerId: string) => `https://api.tenderly.co/api/v1/account/${accountId}/project/${projectSlug}/testnet/container/${containerId}`;
+      console.log(getUrl(containerId));
+      const containerResponse = await fetch(getUrl(containerId), {
+        method: "get",
+        headers: {
+          "Content-Type": "application/json",
+          "X-Access-Key": process.env.TENDERLY_ACCESS_TOKEN!,
+        },
+      });
+
+      const containerData = await containerResponse.json();
+      console.log(containerData);
+      // console.log(await containerResponse.text());
+      const rpcUrl = data.container.connectivityConfig.endpoints.filter((rpc: any) => rpc.displayName == "Admin RPC")[0].uri;
 
       // TODO: filter
       console.log(`RPC URL: ${rpcUrl}`);
