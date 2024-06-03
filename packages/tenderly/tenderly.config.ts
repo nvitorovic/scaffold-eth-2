@@ -15,8 +15,3 @@ export const virtualNetworks: {
     currency: "vETH",
   },
 };
-
-// DO NOT DELETE
-export function isTenderlyVirtualNetwork(chainId: number) {
-  return Object.values(virtualNetworks).filter(chain => chain.chainId == chainId).length > 0;
-}

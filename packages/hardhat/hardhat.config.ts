@@ -26,7 +26,7 @@ const etherscanApiKey = process.env.ETHERSCAN_API_KEY || "DNXJA8RX2Q3VZ4URQIWP7Z
 // https://docs.tenderly.co/contract-verification/hardhat
 // To enable Tenderly verification, set automaticVerifications to true
 // Then update config.tenderly below with your username and project
-tenderly.setup({ automaticVerifications: false });
+tenderly.setup({ automaticVerifications: !!process.env.TENDERLY_AUTOMATIC_VERIFICATIONS });
 
 const config: HardhatUserConfig = {
   solidity: {

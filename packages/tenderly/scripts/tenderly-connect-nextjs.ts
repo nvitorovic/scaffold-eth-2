@@ -30,11 +30,7 @@ function chainConfig(name: string, currency: string, rpcUrl: string, chainId: st
 }
 
 (async function main() {
-  const allChainsConfig = `export const virtualRpcs  : Record<string, ${networkTypesUnion()}> = {
-  ${networkNamesList()}
-};`;
-
-  const viemStyleConfig = await Promise.all(
+  const chainsConfig = await Promise.all(
     Object.entries(virtualNetworks).map(async vNet => {
       return chainConfig(vNet[0], "vETH", vNet[1].url!, vNet[1].chainId + "");
     }),
@@ -47,8 +43,8 @@ function chainConfig(name: string, currency: string, rpcUrl: string, chainId: st
   }
 
   const nextConfig = `import { Chain } from "viem";
-${viemStyleConfig.join("\n\n")}
-${allChainsConfig}
+
+${chainsConfig.join("\n\n")}
 export const virtualChains = [${networkNamesList(" ")}];
 
 export function isTenderlyVirtualNetwork(network: Chain) {
