@@ -7,6 +7,9 @@ if (!process.argv[2]) {
 
 (async function main() {
   console.log("Activating env " + process.argv[1]);
+  if (!process.argv[1]) {
+    throw Error("Provide environment name (ls -l packages/tenderly/environments)");
+  }
   const stageInfraConfig = JSON.parse(readFileSync("./environments/" + process.argv[2] + ".json").toString());
   const tmpConfigFile = "tenderly.config.ts";
   fs.writeFileSync(tmpConfigFile, `type NetworkConfig = {
