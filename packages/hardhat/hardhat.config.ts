@@ -144,8 +144,8 @@ const config: HardhatUserConfig = {
   },
   tenderly: {
     // https://docs.tenderly.co/account/projects/account-project-slug
-    project: "PROJECT SLUG HERE",
-    username: "USERNAME HERE",
+    project: process.env.TENDERLY_PROJECT_ID!,
+    username: process.env.TENDERLY_ACCOUNT_ID!,
   },
 };
 
