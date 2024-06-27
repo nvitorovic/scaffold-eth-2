@@ -13,7 +13,7 @@ async function checkEnvAndArgs() {
     // TODO: replace with an SDK function
     const networks = await getNetworks();
     throw Error(`Specify a list of network IDs you need for this environment:
-${networks.map((network: any) => network.slug + " (" + network.id + ")").join("\n")}`);
+${networks.map((network) => network.slug + " (" + network.id + ")").join("\n")}`);
   }
 
   const missingValues = [
@@ -57,7 +57,7 @@ async function createTestnet(networkId: number, chainId: number, environmentSlug
           chain_config: {
             chain_id: chainId,
           },
-          base_fee_per_gas: 1
+          base_fee_per_gas: 1,
         },
         sync_state_config: {
           enabled: true,
@@ -94,12 +94,17 @@ async function createTestnet(networkId: number, chainId: number, environmentSlug
 
 
 async function getNetworks() {
-  return await (await fetch("https://api.tenderly.co/api/v1/public-networks", {
+  type NetworkInfo = {
+    slug: string,
+    id: string
+  }
+  const networks: NetworkInfo[] = await (await fetch("https://api.tenderly.co/api/v1/public-networks", {
     "headers": {
       "X-Access-Key": process.env.TENDERLY_ACCESS_TOKEN!,
     },
 
   })).json();
+  return networks.sort((net1, net2) => net1.slug.localeCompare(net2.slug));
 }
 
 // Example usage
@@ -121,7 +126,7 @@ async function main() {
 
   for (let i = 3; i < process.argv.length; i++) {
     const networkId = process.argv[i];
-    const chainId = Number.parseInt(`7357${networkId}`);
+    const chainId = Number.parseInt(`${networkId}`);
     const networkName = networks.filter((network: any) => network.id == networkId).map((network: any) => network.slug.replace("-", "_"))[0];
     console.log("Net Name", networkName);
 
