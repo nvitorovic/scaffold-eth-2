@@ -5,7 +5,7 @@ interface IUniswapV3Factory {
     function createPool(address tokenA, address tokenB, uint24 fee) external returns (address pool);
 }
 
-contract PoolAndSwap {
+contract PoolCreator {
     address public factory = 0x1F98431c8aD98523631AE4a59f267346ea31F984;
 
     event PoolCreated(address indexed tokenA, address indexed tokenB, uint24 fee, address pool);

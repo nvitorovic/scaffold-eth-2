@@ -126,7 +126,7 @@ async function main() {
 
   for (let i = 3; i < process.argv.length; i++) {
     const networkId = process.argv[i];
-    const chainId = Number.parseInt(`${networkId}`);
+    const chainId = Number.parseInt(`7357${networkId}`);
     const networkName = networks.filter((network: any) => network.id == networkId).map((network: any) => network.slug.replace("-", "_"))[0];
     console.log("Net Name", networkName);
 
