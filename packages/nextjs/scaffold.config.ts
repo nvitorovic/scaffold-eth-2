@@ -1,8 +1,8 @@
-import * as chains from "viem/chains";
-import { virtual_mainnet } from "~~/tenderly.config";
+import { Chain } from "viem";
+import { virtualChains } from "~~/tenderly.config";
 
 export type ScaffoldConfig = {
-  targetNetworks: readonly chains.Chain[];
+  targetNetworks: readonly [Chain, ...Chain[]];
   pollingInterval: number;
   alchemyApiKey: string;
   walletConnectProjectId: string;
@@ -11,7 +11,7 @@ export type ScaffoldConfig = {
 
 const scaffoldConfig = {
   // The networks on which your DApp is live
-  targetNetworks: [virtual_mainnet],
+  targetNetworks: virtualChains,
 
   // The interval at which your front-end polls the RPC servers for new data
   // it has no effect if you only target the local network (default is 4000)

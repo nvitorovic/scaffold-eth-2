@@ -1,5 +1,6 @@
 import * as fs from "fs";
 import { virtualNetworks } from "../tenderly.config";
+import child_process from "child_process";
 
 const stageName = process.argv[2];
 console.log(virtualNetworks);
@@ -45,7 +46,9 @@ function chainConfig(name: string, currency: string, rpcUrl: string, chainId: st
   const nextConfig = `import { Chain } from "viem";
 
 ${chainsConfig.join("\n\n")}
-export const virtualChains = [${networkNamesList(" ")}];
+
+type VirtualChains = [typeof ${networkNamesList(" typeof ")}];
+export const virtualChains: VirtualChains = [${networkNamesList(" ")}];
 
 export function isTenderlyVirtualNetwork(network: Chain) {
   return virtualChains.map(chain => chain.id as number).indexOf(network.id) > -1;
@@ -54,4 +57,5 @@ export function isTenderlyVirtualNetwork(network: Chain) {
 
   fs.writeFileSync(tmpConfigFile, nextConfig);
   fs.cpSync(tmpConfigFile, "../nextjs/tenderly.config.ts");
+  child_process.execSync("npx prettier ../nextjs/tenderly.config.ts --write");
 })();

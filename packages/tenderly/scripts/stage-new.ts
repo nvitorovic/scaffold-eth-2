@@ -12,8 +12,9 @@ async function checkEnvAndArgs() {
   if (process.argv.length < 4) {
     // TODO: replace with an SDK function
     const networks = await getNetworks();
-    throw Error(`Specify a list of network IDs you need for this environment:
+    console.log(`Specify a list of network IDs you need for this environment:
 ${networks.map((network) => network.slug + " (" + network.id + ")").join("\n")}`);
+    process.exit(1);
   }
 
   const missingValues = [
