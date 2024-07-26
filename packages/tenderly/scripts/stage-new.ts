@@ -131,7 +131,10 @@ async function main() {
     const networkName = networks.filter((network: any) => network.id == networkId).map((network: any) => network.slug.replace("-", "_"))[0];
     console.log("Net Name", networkName);
 
-    const environmentSlug = `${environmentName}--${networkName.toLowerCase().replace(" ", "-")}--${GIT_REF_NAME!.replace("/", "-")}--${GIT_SHA}`;
+    const environmentSlug =
+      process.env.ABSOLUTE_SLUG ??
+      `${environmentName}--${networkName.toLowerCase().replace(" ", "-")}--${GIT_REF_NAME!.replace("/", "-")}--${GIT_SHA}`;
+
     const url = await createTestnet(Number.parseInt(networkId), chainId, environmentSlug);
 
     console.log("Created a testnet", url);
