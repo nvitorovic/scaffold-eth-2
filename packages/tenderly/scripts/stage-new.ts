@@ -7,8 +7,29 @@ dotenv.config();
 const GIT_REF_NAME = process.env.GIT_REF_NAME;
 const GIT_SHA = process.env.GIT_SHA;
 
+const environmentVariablesHelp = {
+  "TENDERLY_ACCOUNT_ID": "Tenderly account id (https://docs.tenderly.co/account/projects/account-project-slug)",
+  "TENDERLY_PROJECT_ID": "Tenderly project slug (https://docs.tenderly.co/account/projects/account-project-slug)",
+  "TENDERLY_ACCESS_TOKEN": "Tenderly access token (https://docs.tenderly.co/account/projects/how-to-generate-api-access-token)",
+  "TENDERLY_SKIP_CHAINID_PREFIX": "Skip prefixing chain ID when creating a Virtual Testnet.",
+  "TENDERLY_CHAINID_PREFIX": "Optional chain ID prefix. By default, the command prefixes every chain ID with 7357.",
+  "ABSOLUTE_SLUG": "Use absolute slug to name your Virtual TestNet. Unless specified, the slug will contain environment name, network name, and Git commit's SHA.",
+};
+
 async function checkEnvAndArgs() {
-  console.log(process.argv);
+
+  if (process.argv[2] == "--help") {
+    console.log("" +
+      "Run the command as" +
+      "tenderly:stage:new <environment name> <chain1> <chain2>...");
+    console.log(`Use the following environment variables for finer control, e.g.:
+
+TENDERLY_CHAINID_PREFIX=999 yarn stage:new my_cool_env 1 8453
+`);
+    console.log(Object.keys(environmentVariablesHelp).sort().map((env: unknown) => `${env}\t\t ${environmentVariablesHelp[env as keyof typeof environmentVariablesHelp]}`).join("\n"));
+    return;
+  }
+
   if (process.argv.length < 4) {
     // TODO: replace with an SDK function
     const networks = await getNetworks();
@@ -127,7 +148,8 @@ async function main() {
 
   for (let i = 3; i < process.argv.length; i++) {
     const networkId = process.argv[i];
-    const chainId = Number.parseInt(`7357${networkId}`);
+    const chainIdPrefix = process.env.TENDERLY_SKIP_CHAINID_PREFIX ? "" : (process.env.TENDERLY_CHAINID_PREFIX || "7357");
+    const chainId = Number.parseInt(`${chainIdPrefix}${networkId}`);
     const networkName = networks.filter((network: any) => network.id == networkId).map((network: any) => network.slug.replace("-", "_"))[0];
     console.log("Net Name", networkName);
 
