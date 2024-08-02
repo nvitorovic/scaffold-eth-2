@@ -1,6 +1,7 @@
 import { HardhatRuntimeEnvironment } from "hardhat/types";
 import { DeployFunction } from "hardhat-deploy/types";
 import { Contract } from "ethers";
+import { tenderlyFund } from "../scripts/tenderly-fund";
 
 /**
  * Deploys a contract named "YourContract" using the deployer account and
@@ -22,6 +23,8 @@ const deployYourContract: DeployFunction = async function (hre: HardhatRuntimeEn
   const { deployer } = await hre.getNamedAccounts();
   const { deploy } = hre.deployments;
 
+  await tenderlyFund(deployer);
+
   await deploy("YourContract", {
     from: deployer,
     // Contract constructor arguments
@@ -30,6 +33,7 @@ const deployYourContract: DeployFunction = async function (hre: HardhatRuntimeEn
     // autoMine: can be passed to the deploy function to make the deployment process faster on local networks by
     // automatically mining the contract deployment transaction. There is no effect on live networks.
     autoMine: true,
+    gasLimit: 8000000,
   });
 
   // Get the deployed contract to interact with it after deploying.

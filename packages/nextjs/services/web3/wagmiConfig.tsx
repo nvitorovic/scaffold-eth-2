@@ -3,6 +3,7 @@ import { Chain, createClient, http } from "viem";
 import { hardhat, mainnet } from "viem/chains";
 import { createConfig } from "wagmi";
 import scaffoldConfig from "~~/scaffold.config";
+import { isTenderlyVirtualNetwork } from "~~/tenderly.config";
 import { getAlchemyHttpUrl } from "~~/utils/scaffold-eth";
 
 const { targetNetworks } = scaffoldConfig;
@@ -12,6 +13,14 @@ export const enabledChains = targetNetworks.find((network: Chain) => network.id 
   ? targetNetworks
   : ([...targetNetworks, mainnet] as const);
 
+function getRpc(chain: Chain) {
+  if (isTenderlyVirtualNetwork(chain)) {
+    // The RPC is in there
+    return chain.rpcUrls.default.http[0];
+  }
+  return getAlchemyHttpUrl(chain.id);
+}
+
 export const wagmiConfig = createConfig({
   chains: enabledChains,
   connectors: wagmiConnectors,
@@ -19,7 +28,7 @@ export const wagmiConfig = createConfig({
   client({ chain }) {
     return createClient({
       chain,
-      transport: http(getAlchemyHttpUrl(chain.id)),
+      transport: http(getRpc(chain)),
       ...(chain.id !== (hardhat as Chain).id
         ? {
             pollingInterval: scaffoldConfig.pollingInterval,

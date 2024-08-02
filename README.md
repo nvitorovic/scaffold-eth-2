@@ -65,8 +65,26 @@ Visit your app on: `http://localhost:3000`. You can interact with your smart con
 
 - Edit your smart contract `YourContract.sol` in `packages/hardhat/contracts`
 - Edit your frontend homepage at `packages/nextjs/app/page.tsx`. For guidance on [routing](https://nextjs.org/docs/app/building-your-application/routing/defining-routes) and configuring [pages/layouts](https://nextjs.org/docs/app/building-your-application/routing/pages-and-layouts) checkout the Next.js documentation.
+- Edit `packages/hardhat/hardhat.config.ts` to enable [verification on Tenderly](https://docs.tenderly.co/contract-verification/hardhat) (`automaticVerifications: true`).
 - Edit your deployment scripts in `packages/hardhat/deploy`
 - Edit your smart contract test in: `packages/hardhat/test`. To run test use `yarn hardhat:test`
+
+## Connecting to Tenderly TestNet
+
+1. Clone this repo & install dependencies
+
+```
+git clone https://github.com/scaffold-eth/scaffold-eth-2.git
+cd scaffold-eth-2
+yarn install
+```
+
+2. Configure the TestNet
+
+- Edit `packages/hardhat/hardhat.config.ts` and copy the correct snippet from [**Virtual TestNets > Integrations**](https://dashboard.tenderly.co/project/virtual-testnets/integrations)
+- 
+
+3. 
 
 ## Documentation
 

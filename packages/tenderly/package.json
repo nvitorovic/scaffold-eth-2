@@ -1,0 +1,20 @@
+{
+  "name": "tenderly",
+  "packageManager": "yarn@3.2.3",
+  "devDependencies": {
+    "@types/node": "^20.12.12",
+    "ts-node": "^10.9.2"
+  },
+  "scripts": {
+    "tenderly-env": "cp .env.example .env",
+    "stage:new": "GIT_REF_NAME=$(git rev-parse --abbrev-ref HEAD) GIT_SHA=$(git rev-parse HEAD) ts-node scripts/stage-new.ts",
+    "stage:connect:hardhat": "ts-node scripts/tenderly-connect-hardhat.ts",
+    "stage:connect:nextjs": "ts-node scripts/tenderly-connect-nextjs.ts",
+    "stage:connect:thegraph": "ts-node scripts/tenderly-connect-thegraph.ts",
+    "stage:activate": "npx ts-node scripts/tenderly-stage-activate.ts"
+  },
+  "dependencies": {
+    "dotenv": "^16.4.5",
+    "typescript": "^5.4.5"
+  }
+}
