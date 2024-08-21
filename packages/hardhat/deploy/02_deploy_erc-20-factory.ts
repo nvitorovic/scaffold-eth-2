@@ -5,22 +5,6 @@ import { Contract, EventLog, parseEther, Wallet } from "ethers";
 import { ERC20TokenFactory } from "../typechain-types";
 import { tenderly } from "hardhat";
 
-async function createToken(hre: HardhatRuntimeEnvironment, deployer: string, tokenName: string, tokenSymbol: string) {
-  const tokenFactory = await hre.ethers.getContract<ERC20TokenFactory>("ERC20TokenFactory", deployer);
-  const tok = await tokenFactory.createToken(tokenName, tokenSymbol, parseEther("100000000000000000000000000000000"));
-  const receipt = await tok.wait();
-
-  const tstToken = (receipt!.logs.filter((log: any) => log.fragment?.name === "TokenCreated")[0] as EventLog).args[0];
-  console.log("Sending....");
-
-  const erc20Token = new Contract(
-    tstToken,
-    ["function transfer(address to, uint amount) returns (bool)"],
-    (await hre.ethers.getSigners())[0],
-  );
-  return erc20Token;
-}
-
 const deployErc20TokenFactory: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   const { deployer } = await hre.getNamedAccounts();
   const { deploy } = hre.deployments;
@@ -62,6 +46,21 @@ const deployErc20TokenFactory: DeployFunction = async function (hre: HardhatRunt
     },
   );
 };
+
+async function createToken(hre: HardhatRuntimeEnvironment, deployer: string, tokenName: string, tokenSymbol: string) {
+  const tokenFactory = await hre.ethers.getContract<ERC20TokenFactory>("ERC20TokenFactory", deployer);
+  const tok = await tokenFactory.createToken(tokenName, tokenSymbol, parseEther("100000000000000000000000000000000"));
+  const receipt = await tok.wait();
+
+  const tstToken = (receipt!.logs.filter((log: any) => log.fragment?.name === "TokenCreated")[0] as EventLog).args[0];
+  console.log("Sending....");
+
+  return new Contract(
+    tstToken,
+    ["function transfer(address to, uint amount) returns (bool)"],
+    (await hre.ethers.getSigners())[0],
+  );
+}
 
 export default deployErc20TokenFactory;
 
