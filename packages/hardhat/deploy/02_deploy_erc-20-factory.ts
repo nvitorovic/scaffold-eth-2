@@ -24,8 +24,6 @@ const deployErc20TokenFactory: DeployFunction = async function (hre: HardhatRunt
   const tokenFoo = await createToken(hre, deployer, "Foo Token", "FOO");
   const tokenTst = await createToken(hre, deployer, "Bar Token", "BAR");
 
-  console.log("Sending");
-
   await Promise.all([
     tokenTst.transfer(Wallet.createRandom(hre.ethers.provider), parseEther("100000000")),
     tokenTst.transfer(Wallet.createRandom(hre.ethers.provider), parseEther("100000000")),
@@ -53,7 +51,7 @@ async function createToken(hre: HardhatRuntimeEnvironment, deployer: string, tok
   const receipt = await tok.wait();
 
   const tstToken = (receipt!.logs.filter((log: any) => log.fragment?.name === "TokenCreated")[0] as EventLog).args[0];
-  console.log("Sending....");
+  console.log(`Deployed test token ${tokenName} ${tokenSymbol}`);
 
   return new Contract(
     tstToken,

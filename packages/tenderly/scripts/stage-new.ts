@@ -150,7 +150,7 @@ async function main() {
     const networkId = process.argv[i];
     const chainIdPrefix = process.env.TENDERLY_SKIP_CHAINID_PREFIX ? "" : (process.env.TENDERLY_CHAINID_PREFIX || "7357");
     const chainId = Number.parseInt(`${chainIdPrefix}${networkId}`);
-    const networkName = networks.filter((network: any) => network.id == networkId).map((network: any) => network.slug.replace("-", "_"))[0];
+    const networkName = networks.filter((network: any) => network.id == networkId).map((network: any) => network.slug.replaceAll("-", "_"))[0];
     console.log("Net Name", networkName);
 
     const environmentSlug =
