@@ -1,9 +1,9 @@
 import { HardhatRuntimeEnvironment } from "hardhat/types";
 import { DeployFunction } from "hardhat-deploy/types";
 import { tenderlyFund } from "../scripts/tenderly-fund";
-import { Contract, EventLog, parseEther, Wallet } from "ethers";
-import { ERC20TokenFactory, SimpleAMM } from "../typechain-types";
-import { tenderly } from "hardhat";
+import { parseEther, Wallet } from "ethers";
+import { SimpleAMM } from "../typechain-types";
+import { createToken } from "../scripts/erc20FactoryUtils";
 
 const deployErc20TokenFactory: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   const { deployer } = await hre.getNamedAccounts();
@@ -40,39 +40,10 @@ const deployErc20TokenFactory: DeployFunction = async function (hre: HardhatRunt
   await bazLP.approve(await simpleAmm.getAddress(), parseEther("100000000000000"));
 
   await simpleAmm.addLiquidity(BigInt("10000000"), BigInt("10000000"));
-
-  await tenderly.verify(
-    {
-      name: "ERC20Token",
-      address: await bazToken.getAddress(),
-    },
-    {
-      name: "ERC20Token",
-      address: await buzToken.getAddress(),
-    },
-  );
 };
-
-async function createToken(hre: HardhatRuntimeEnvironment, deployer: string, tokenName: string, tokenSymbol: string) {
-  const tokenFactory = await hre.ethers.getContract<ERC20TokenFactory>("ERC20TokenFactory", deployer);
-  const tok = await tokenFactory.createToken(tokenName, tokenSymbol, parseEther("100000000000000000000000000000000"));
-  const receipt = await tok.wait();
-
-  const tstToken = (receipt!.logs.filter((log: any) => log.fragment?.name === "TokenCreated")[0] as EventLog).args[0];
-  console.log(`Deployed test token ${tokenName} ${tokenSymbol}`);
-
-  return new Contract(
-    tstToken,
-    [
-      "function transfer(address to, uint amount) returns (bool)",
-      "function approve(address spender, uint256 amount) external returns (bool)",
-    ],
-    (await hre.ethers.getSigners())[0],
-  );
-}
 
 export default deployErc20TokenFactory;
 
 // Tags are useful if you have multiple deploy files and only want to run one of them.
 // e.g. yarn deploy --tags YourContract
-deployErc20TokenFactory.tags = ["Erc20TokenFactory"];
+deployErc20TokenFactory.tags = ["SimpleAMM"];
